@@ -23,21 +23,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Connect"
-        app:layout_constraintBottom_toTopOf="@+id/counterclockwise"
+        app:layout_constraintBottom_toTopOf="@+id/space"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.715" />
-
-    <Button
-        android:id="@+id/clockwise"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:text="Clockwise"
-        app:layout_constraintBottom_toBottomOf="@+id/counterclockwise"
-        app:layout_constraintStart_toEndOf="@+id/counterclockwise" />
+        app:layout_constraintVertical_bias="0.705" />
 
     <SeekBar
         android:id="@+id/rortationSlider"
@@ -64,17 +55,6 @@
         app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/backwardButton" />
-
-    <Button
-        android:id="@+id/counterclockwise"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="52dp"
-        android:text="Counter Clockwise"
-        app:layout_constraintBottom_toTopOf="@+id/rortationSlider"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.23"
-        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/leftButton"
@@ -153,12 +133,43 @@
         android:id="@+id/turnTypeButton"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:background="@drawable/basic_turn"
+        android:background="@drawable/pivot_turn"
         android:padding="0dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/backwardButton"
         app:layout_constraintEnd_toStartOf="@+id/rightButton"
         app:layout_constraintStart_toEndOf="@+id/leftButton"
         app:layout_constraintTop_toBottomOf="@+id/forwardButton" />
+
+    <ImageButton
+        android:id="@+id/clockwise"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/cw"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/space"
+        app:srcCompat="@drawable/cw" />
+
+    <ImageButton
+        android:id="@+id/counterclockwise"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/ccw"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/space"
+        app:layout_constraintTop_toTopOf="@+id/space"
+        app:srcCompat="@drawable/ccw" />
+
+    <Space
+        android:id="@+id/space"
+        android:layout_width="5dp"
+        android:layout_height="70dp"
+        android:layout_marginBottom="44dp"
+        app:layout_constraintBottom_toTopOf="@+id/rortationSlider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

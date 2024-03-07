@@ -20,8 +20,6 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Iterator;
@@ -42,15 +40,15 @@ public class MainActivity extends AppCompatActivity {
 
     TextView statusText;
     boolean isConnected = false;
-    boolean pivotTurn = false;
+    boolean spinTurn = false;
     long lastDisconnect = 0;
     ImageButton rightButton;
     ImageButton leftButton;
     ImageButton forwardButton;
     ImageButton backwardButton;
     Button bluetooth_button;
-    Button clockwiseButton;
-    Button counterClockwiseButton;
+    ImageButton clockwiseButton;
+    ImageButton counterClockwiseButton;
     ImageButton turnTypeButton;
 
     public void connectStatusUpdater() {
@@ -100,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
             private Handler mHandler;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                statusText.setText("" + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         if (mHandler != null) return true;
@@ -138,7 +135,6 @@ public class MainActivity extends AppCompatActivity {
             private Handler mHandler;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                statusText.setText("" + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         if (mHandler != null) return true;
@@ -187,8 +183,8 @@ public class MainActivity extends AppCompatActivity {
         leftButton = (ImageButton) findViewById(R.id.leftButton);
         forwardButton = (ImageButton) findViewById(R.id.forwardButton);
         backwardButton = (ImageButton) findViewById(R.id.backwardButton);
-        clockwiseButton = (Button) findViewById(R.id.clockwise);
-        counterClockwiseButton = (Button) findViewById(R.id.counterclockwise);
+        clockwiseButton = (ImageButton) findViewById(R.id.clockwise);
+        counterClockwiseButton = (ImageButton) findViewById(R.id.counterclockwise);
         turnTypeButton = (ImageButton) findViewById(R.id.turnTypeButton);
 
         connectStatusUpdater();
@@ -213,24 +209,22 @@ public class MainActivity extends AppCompatActivity {
 
         setButtonListenerMoveMotor(forwardButton, 0x06, powerSlider, 1);
         setButtonListenerMoveMotor(backwardButton, 0x06, powerSlider, -1);
-        setButtonListenerMoveMotor(leftButton, 0x02, powerSlider, 1);
-        setButtonListenerMoveMotor(rightButton, 0x04, powerSlider, 1);
+        setButtonListenerMoveMotor(leftButton, 0x04, powerSlider, 1);
+        setButtonListenerMoveMotor(rightButton, 0x02, powerSlider, 1);
         setButtonListenerMoveMotor(clockwiseButton, 0x01, rotationSlider, 1);
         setButtonListenerMoveMotor(counterClockwiseButton, 0x01, rotationSlider, -1);
 
         turnTypeButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                if (pivotTurn) {
-                    // Switch to basic turn
-                    statusText.setText("iojhjsdghujiosdfghjk");
-                    pivotTurn = false;
-                    turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.basic_turn));
-                } else {
+                if (spinTurn) {
                     // Switch to pivot turn
-                    pivotTurn = true;
-                    statusText.setText(":)");
+                    spinTurn = false;
                     turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pivot_turn));
+                } else {
+                    // Switch to spin turn
+                    spinTurn = true;
+                    turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.spin_turn));
                 }
             }
         });
