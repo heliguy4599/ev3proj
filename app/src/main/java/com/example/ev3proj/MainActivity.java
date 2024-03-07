@@ -16,10 +16,11 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -41,47 +42,61 @@ public class MainActivity extends AppCompatActivity {
 
     TextView statusText;
     boolean isConnected = false;
+    boolean pivotTurn = false;
     long lastDisconnect = 0;
+    ImageButton rightButton;
+    ImageButton leftButton;
+    ImageButton forwardButton;
+    ImageButton backwardButton;
+    Button bluetooth_button;
+    Button clockwiseButton;
+    Button counterClockwiseButton;
+    ImageButton turnTypeButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public void connectStatusUpdater() {
+        forwardButton.setEnabled(isConnected);
+        backwardButton.setEnabled(isConnected);
+        leftButton.setEnabled(isConnected);
+        rightButton.setEnabled(isConnected);
+        clockwiseButton.setEnabled(isConnected);
+        counterClockwiseButton.setEnabled(isConnected);
+        if (isConnected) {
+            bluetooth_button.setText("Disconnect");
+            forwardButton.setAlpha(1f);
+            backwardButton.setAlpha(1f);
+            leftButton.setAlpha(1f);
+            rightButton.setAlpha(1f);
+            clockwiseButton.setAlpha(1f);
+            counterClockwiseButton.setAlpha(1f);
+        } else {
+            bluetooth_button.setText("Connect");
+            forwardButton.setAlpha(0.5f);
+            backwardButton.setAlpha(0.5f);
+            leftButton.setAlpha(0.5f);
+            rightButton.setAlpha(0.5f);
+            clockwiseButton.setAlpha(0.5f);
+            counterClockwiseButton.setAlpha(0.5f);
+        }
+    }
 
-        Button bluetooth_button = (Button) findViewById(R.id.bluetooth_button);
-        Button forwardButton = (Button) findViewById(R.id.forwardButton);
-        Button backwardButton = (Button) findViewById(R.id.backwardButton);
-        SeekBar powerSlider = (SeekBar) findViewById(R.id.powerSlider);
-
-        ImageButton newMove = (ImageButton) findViewById(R.id.newMove);
-
-        forwardButton.setEnabled(false);
-        backwardButton.setEnabled(false);
-        int minspeed = 3;
-
-        bluetooth_button.setOnClickListener(new View.OnClickListener(){
+    public void setSeekBarListener(SeekBar seekBar, TextView textView, String labelPrefix) {
+        SeekBar.OnSeekBarChangeListener temp = new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onClick(View v) {
-                if (isConnected) {
-                    cpf_disconnFromEV3(cv_btDevice);
-                    bluetooth_button.setText("Connect");
-                    isConnected = false;
-                    forwardButton.setEnabled(false);
-                    backwardButton.setEnabled(false);
-                    return;
-                }
-                cpf_requestBTPermissions();
-                cv_btDevice = cpf_locateInPairedBTList(CV_ROBOTNAME);
-                isConnected = cpf_connectToEV3(cv_btDevice);
-                if (isConnected) {
-                    forwardButton.setEnabled(true);
-                    backwardButton.setEnabled(true);
-                    bluetooth_button.setText("Disconnect");
-                }
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                textView.setText(labelPrefix + seekBar.getProgress());
             }
-        });
 
-        newMove.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        };
+        seekBar.setOnSeekBarChangeListener(temp);
+    }
+
+    public void setButtonListenerMoveMotor(ImageButton button, int motorSel, SeekBar seekBar, int powerMultiple) {
+        button.setOnTouchListener(new View.OnTouchListener() {
             private Handler mHandler;
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -91,12 +106,16 @@ public class MainActivity extends AppCompatActivity {
                         if (mHandler != null) return true;
                         mHandler = new Handler();
                         mHandler.post(mAction);
+                        button.setScaleX((float) 0.8);
+                        button.setScaleY((float) 0.8);
                         break;
                     case MotionEvent.ACTION_UP:
                         if (mHandler == null) return true;
                         mHandler.removeCallbacks(mAction);
-                        newMotor(0, 0x0F);
+                        newMotor(0, motorSel);
                         mHandler = null;
+                        button.setScaleX((float) 1);
+                        button.setScaleY((float) 1);
                         break;
                 }
                 return false;
@@ -105,32 +124,36 @@ public class MainActivity extends AppCompatActivity {
             private Runnable mAction = new Runnable() {
                 @Override
                 public void run() {
-                    int speed = powerSlider.getProgress();
-                    if (speed < minspeed) speed = minspeed;
-                    newMotor(speed, 0x02);
+                    newMotor(powerMultiple * seekBar.getProgress(), motorSel);
 
                     // Post the action again after a delay
                     mHandler.postDelayed(this, 100); // Adjust the delay as needed
                 }
             };
         });
+    }
 
-        forwardButton.setOnTouchListener(new View.OnTouchListener() {
+    public void setButtonListenerMoveMotor(Button button, int motorSel, SeekBar seekBar, int powerMultiple) {
+        button.setOnTouchListener(new View.OnTouchListener() {
             private Handler mHandler;
-
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                statusText.setText("" + event.getAction());
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         if (mHandler != null) return true;
                         mHandler = new Handler();
                         mHandler.post(mAction);
+                        button.setScaleX((float) 0.8);
+                        button.setScaleY((float) 0.8);
                         break;
                     case MotionEvent.ACTION_UP:
                         if (mHandler == null) return true;
                         mHandler.removeCallbacks(mAction);
-                        cpf_EV3MoveMotor(0);
+                        newMotor(0, motorSel);
                         mHandler = null;
+                        button.setScaleX((float) 1);
+                        button.setScaleY((float) 1);
                         break;
                 }
                 return false;
@@ -139,54 +162,78 @@ public class MainActivity extends AppCompatActivity {
             private Runnable mAction = new Runnable() {
                 @Override
                 public void run() {
-//                    cpf_EV3MoveMotor(cv_powerSlider.getProgress());
-                    int speed = powerSlider.getProgress();
-                    if (speed < minspeed) speed = minspeed;
-                    cpf_EV3MoveMotor(speed);
+                    newMotor(powerMultiple * seekBar.getProgress(), motorSel);
 
                     // Post the action again after a delay
                     mHandler.postDelayed(this, 100); // Adjust the delay as needed
                 }
             };
         });
+    }
 
-        backwardButton.setOnTouchListener(new View.OnTouchListener() {
-            private Handler mHandler;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (mHandler != null) return true;
-                        mHandler = new Handler();
-                        mHandler.post(mAction);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (mHandler == null) return true;
-                        mHandler.removeCallbacks(mAction);
-                        cpf_EV3MoveMotor(0);
-                        mHandler = null;
-                        break;
-                }
-                return false;
-            }
-
-            private Runnable mAction = new Runnable() {
-                @Override
-                public void run() {
-//                    cpf_EV3MoveMotor(cv_powerSlider.getProgress());
-                    int speed = powerSlider.getProgress();
-                    if (speed < minspeed) speed = minspeed;
-                    cpf_EV3MoveMotor(-speed);
-
-                    // Post the action again after a delay
-                    mHandler.postDelayed(this, 100); // Adjust the delay as needed
-                }
-            };
-        });
-
-
+        bluetooth_button = (Button) findViewById(R.id.bluetooth_button);
+        SeekBar powerSlider = (SeekBar) findViewById(R.id.powerSlider);
+        SeekBar rotationSlider = (SeekBar) findViewById(R.id.rortationSlider);
         statusText = (TextView) findViewById(R.id.textView);
+        TextView powerLabel = (TextView) findViewById(R.id.powerLabel);
+        TextView rotationLabel = (TextView) findViewById(R.id.rotationLabel);
+
+        rightButton = (ImageButton) findViewById(R.id.rightButton);
+        leftButton = (ImageButton) findViewById(R.id.leftButton);
+        forwardButton = (ImageButton) findViewById(R.id.forwardButton);
+        backwardButton = (ImageButton) findViewById(R.id.backwardButton);
+        clockwiseButton = (Button) findViewById(R.id.clockwise);
+        counterClockwiseButton = (Button) findViewById(R.id.counterclockwise);
+        turnTypeButton = (ImageButton) findViewById(R.id.turnTypeButton);
+
+        connectStatusUpdater();
+
+        bluetooth_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (isConnected) {
+                    cpf_disconnFromEV3(cv_btDevice);
+                    isConnected = false;
+                } else {
+                    cpf_requestBTPermissions();
+                    cv_btDevice = cpf_locateInPairedBTList(CV_ROBOTNAME);
+                    isConnected = cpf_connectToEV3(cv_btDevice);
+                }
+                connectStatusUpdater();
+            }
+        });
+
+        setSeekBarListener(powerSlider, powerLabel, "Power: ");
+        setSeekBarListener(rotationSlider, rotationLabel, "Power: ");
+
+        setButtonListenerMoveMotor(forwardButton, 0x06, powerSlider, 1);
+        setButtonListenerMoveMotor(backwardButton, 0x06, powerSlider, -1);
+        setButtonListenerMoveMotor(leftButton, 0x02, powerSlider, 1);
+        setButtonListenerMoveMotor(rightButton, 0x04, powerSlider, 1);
+        setButtonListenerMoveMotor(clockwiseButton, 0x01, rotationSlider, 1);
+        setButtonListenerMoveMotor(counterClockwiseButton, 0x01, rotationSlider, -1);
+
+        turnTypeButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if (pivotTurn) {
+                    // Switch to basic turn
+                    statusText.setText("iojhjsdghujiosdfghjk");
+                    pivotTurn = false;
+                    turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.basic_turn));
+                } else {
+                    // Switch to pivot turn
+                    pivotTurn = true;
+                    statusText.setText(":)");
+                    turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pivot_turn));
+                }
+            }
+        });
     }
 
     private void cpf_requestBTPermissions() {

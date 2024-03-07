@@ -11,81 +11,154 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="No device paired yet"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/bluetooth_button"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.259" />
+        app:layout_constraintVertical_bias="0.718" />
 
     <Button
         android:id="@+id/bluetooth_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="596dp"
         android:text="Connect"
+        app:layout_constraintBottom_toTopOf="@+id/counterclockwise"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.715" />
 
     <Button
-        android:id="@+id/backwardButton"
+        android:id="@+id/clockwise"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="396dp"
-        android:text="Backwards"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:layout_marginStart="12dp"
+        android:text="Clockwise"
+        app:layout_constraintBottom_toBottomOf="@+id/counterclockwise"
+        app:layout_constraintStart_toEndOf="@+id/counterclockwise" />
 
-    <Button
-        android:id="@+id/forwardButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="340dp"
-        android:text="Forward"
+    <SeekBar
+        android:id="@+id/rortationSlider"
+        style="@android:style/Widget.Material.SeekBar"
+        android:layout_width="310dp"
+        android:layout_height="18dp"
+        android:layout_marginBottom="33dp"
+        android:max="100"
+        android:progress="50"
+        app:layout_constraintBottom_toTopOf="@+id/forwardButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <SeekBar
         android:id="@+id/powerSlider"
         style="@android:style/Widget.Material.SeekBar"
         android:layout_width="310dp"
         android:layout_height="18dp"
-        android:layout_marginTop="300dp"
+        android:layout_marginTop="132dp"
         android:max="100"
         android:progress="50"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintHorizontal_bias="0.495"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/backwardButton" />
 
-    <ImageButton
-        android:id="@+id/newMove"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginEnd="96dp"
-        android:layout_marginBottom="176dp"
-        android:padding="0dp"
-        android:rotationY="180"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <Button
+        android:id="@+id/counterclockwise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="52dp"
+        android:text="Counter Clockwise"
+        app:layout_constraintBottom_toTopOf="@+id/rortationSlider"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/arrow" />
+        app:layout_constraintHorizontal_bias="0.23"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/leftButton"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:layout_marginStart="96dp"
-        android:layout_marginBottom="176dp"
         android:padding="0dp"
         android:rotationY="0"
         android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/forwardButton"
+        app:layout_constraintTop_toBottomOf="@+id/forwardButton"
+        app:srcCompat="@drawable/arrow"
+        android:background="@drawable/arrow" />
+
+    <ImageButton
+        android:id="@+id/backwardButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="0dp"
+        android:rotation="270"
+        android:rotationY="180"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintTop_toBottomOf="@+id/leftButton"
+        app:srcCompat="@drawable/arrow"
+        android:background="@drawable/arrow" />
+
+    <ImageButton
+        android:id="@+id/rightButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:padding="0dp"
+        android:rotationY="180"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toEndOf="@+id/forwardButton"
+        app:layout_constraintTop_toBottomOf="@+id/forwardButton"
+        app:srcCompat="@drawable/arrow"
+        android:background="@drawable/arrow" />
+
+    <ImageButton
+        android:id="@+id/forwardButton"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginBottom="316dp"
+        android:background="@drawable/arrow"
+        android:padding="0dp"
+        android:rotation="90"
+        android:rotationY="0"
+        android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:srcCompat="@drawable/arrow" />
+
+    <TextView
+        android:id="@+id/powerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Power: 50"
+        app:layout_constraintBottom_toTopOf="@+id/powerSlider"
+        app:layout_constraintStart_toStartOf="@+id/powerSlider" />
+
+    <TextView
+        android:id="@+id/rotationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="4dp"
+        android:text="Power 50"
+        app:layout_constraintBottom_toTopOf="@+id/rortationSlider"
+        app:layout_constraintStart_toStartOf="@+id/rortationSlider" />
+
+    <ImageButton
+        android:id="@+id/turnTypeButton"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:background="@drawable/basic_turn"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/backwardButton"
+        app:layout_constraintEnd_toStartOf="@+id/rightButton"
+        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintTop_toBottomOf="@+id/forwardButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
