@@ -1,6 +1,0 @@
-motors by default are BC
-This uses 4 bits: XXXX
-A = 1000 = 8 -> 0x08
-B = 0100 = 4 -> 0x04
-C = 0010 = 2 -> 0x02
-D = 0001 = 1 -> 0x01

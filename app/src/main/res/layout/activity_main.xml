@@ -130,18 +130,6 @@
         app:layout_constraintStart_toStartOf="@+id/rortationSlider" />
 
     <ImageButton
-        android:id="@+id/turnTypeButton"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:background="@drawable/pivot_turn"
-        android:padding="0dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toTopOf="@+id/backwardButton"
-        app:layout_constraintEnd_toStartOf="@+id/rightButton"
-        app:layout_constraintStart_toEndOf="@+id/leftButton"
-        app:layout_constraintTop_toBottomOf="@+id/forwardButton" />
-
-    <ImageButton
         android:id="@+id/clockwise"
         android:layout_width="70dp"
         android:layout_height="70dp"
@@ -171,5 +159,29 @@
         app:layout_constraintBottom_toTopOf="@+id/rortationSlider"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <Switch
+        android:id="@+id/SpinSwitch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/backwardButton"
+        app:layout_constraintEnd_toStartOf="@+id/rightButton"
+        app:layout_constraintHorizontal_bias="0.57"
+        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintTop_toBottomOf="@+id/forwardButton"
+        app:layout_constraintVertical_bias="0.671" />
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Spin Turn"
+        app:layout_constraintBottom_toTopOf="@+id/SpinSwitch"
+        app:layout_constraintEnd_toStartOf="@+id/rightButton"
+        app:layout_constraintHorizontal_bias="0.512"
+        app:layout_constraintStart_toEndOf="@+id/leftButton"
+        app:layout_constraintTop_toBottomOf="@+id/forwardButton"
+        app:layout_constraintVertical_bias="0.633" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

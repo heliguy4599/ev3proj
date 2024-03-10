@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +50,8 @@ public class MainActivity extends AppCompatActivity {
     Button bluetooth_button;
     ImageButton clockwiseButton;
     ImageButton counterClockwiseButton;
-    ImageButton turnTypeButton;
+
+    Switch spinSwitch;
 
     public void connectStatusUpdater() {
         forwardButton.setEnabled(isConnected);
@@ -109,7 +111,13 @@ public class MainActivity extends AppCompatActivity {
                     case MotionEvent.ACTION_UP:
                         if (mHandler == null) return true;
                         mHandler.removeCallbacks(mAction);
-                        newMotor(0, motorSel);
+
+                        if(motorSel == 0x01) {
+                            newMotor(0, 0x01);
+                        } else {
+                            newMotor(0, 0x06);
+                        }
+
                         mHandler = null;
                         button.setScaleX((float) 1);
                         button.setScaleY((float) 1);
@@ -121,44 +129,23 @@ public class MainActivity extends AppCompatActivity {
             private Runnable mAction = new Runnable() {
                 @Override
                 public void run() {
-                    newMotor(powerMultiple * seekBar.getProgress(), motorSel);
-
-                    // Post the action again after a delay
-                    mHandler.postDelayed(this, 100); // Adjust the delay as needed
-                }
-            };
-        });
-    }
-
-    public void setButtonListenerMoveMotor(Button button, int motorSel, SeekBar seekBar, int powerMultiple) {
-        button.setOnTouchListener(new View.OnTouchListener() {
-            private Handler mHandler;
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        if (mHandler != null) return true;
-                        mHandler = new Handler();
-                        mHandler.post(mAction);
-                        button.setScaleX((float) 0.8);
-                        button.setScaleY((float) 0.8);
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        if (mHandler == null) return true;
-                        mHandler.removeCallbacks(mAction);
-                        newMotor(0, motorSel);
-                        mHandler = null;
-                        button.setScaleX((float) 1);
-                        button.setScaleY((float) 1);
-                        break;
-                }
-                return false;
-            }
-
-            private Runnable mAction = new Runnable() {
-                @Override
-                public void run() {
-                    newMotor(powerMultiple * seekBar.getProgress(), motorSel);
+                    if(spinSwitch.isChecked()) {
+                        switch(motorSel){
+                            case 0x02:
+                                newMotor(seekBar.getProgress(), 0x02);
+                                newMotor(-1 * seekBar.getProgress(), 0x04);
+                            break;
+                            case 0x04:
+                                newMotor(seekBar.getProgress(), 0x04);
+                                newMotor(-1 * seekBar.getProgress(), 0x02);
+                            break;
+                            default:
+                                newMotor(powerMultiple * seekBar.getProgress(), motorSel);
+                            break;
+                        }
+                    } else {
+                        newMotor(powerMultiple * seekBar.getProgress(), motorSel);
+                    }
 
                     // Post the action again after a delay
                     mHandler.postDelayed(this, 100); // Adjust the delay as needed
@@ -178,6 +165,7 @@ public class MainActivity extends AppCompatActivity {
         statusText = (TextView) findViewById(R.id.textView);
         TextView powerLabel = (TextView) findViewById(R.id.powerLabel);
         TextView rotationLabel = (TextView) findViewById(R.id.rotationLabel);
+        spinSwitch = (Switch) findViewById(R.id.SpinSwitch);
 
         rightButton = (ImageButton) findViewById(R.id.rightButton);
         leftButton = (ImageButton) findViewById(R.id.leftButton);
@@ -185,7 +173,6 @@ public class MainActivity extends AppCompatActivity {
         backwardButton = (ImageButton) findViewById(R.id.backwardButton);
         clockwiseButton = (ImageButton) findViewById(R.id.clockwise);
         counterClockwiseButton = (ImageButton) findViewById(R.id.counterclockwise);
-        turnTypeButton = (ImageButton) findViewById(R.id.turnTypeButton);
 
         connectStatusUpdater();
 
@@ -213,21 +200,6 @@ public class MainActivity extends AppCompatActivity {
         setButtonListenerMoveMotor(rightButton, 0x02, powerSlider, 1);
         setButtonListenerMoveMotor(clockwiseButton, 0x01, rotationSlider, 1);
         setButtonListenerMoveMotor(counterClockwiseButton, 0x01, rotationSlider, -1);
-
-        turnTypeButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                if (spinTurn) {
-                    // Switch to pivot turn
-                    spinTurn = false;
-                    turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.pivot_turn));
-                } else {
-                    // Switch to spin turn
-                    spinTurn = true;
-                    turnTypeButton.setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.spin_turn));
-                }
-            }
-        });
     }
 
     private void cpf_requestBTPermissions() {
